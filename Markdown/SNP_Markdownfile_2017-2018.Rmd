@@ -1,0 +1,60 @@
+---
+title: "SNP Data Analysis"
+author: "Program Improvement - Roy Perez"
+date: "February 20, 2019"
+output: github_document
+
+---
+##Quick SNP Analysis 
+
+```{r setup, echo=FALSE, include=FALSE}
+library(here)
+library(tidyverse)
+
+###Loading Data
+df <- read.delim(here("Raw-Data","SNP_Meal-Reimbursement-Information-Program-Year-2018-2019_2019.csv"), header = TRUE, sep = ",", stringsAsFactors = FALSE)
+###convert to tibble
+df <- as_tibble(df)
+###Removing Columns
+df <- df[-c(1,2)]
+###Adding Leading zeroes
+df$CEID <- str_pad(df$CEID, 5, pad = 0)
+df$ESC <- str_pad(df$ESC, 2, pad = 0)
+df$SiteID <- str_pad(df$SiteID, 4, pad = 0)
+###strip time from the claim date
+df$ClaimDate <- as.Date(df$ClaimDate, format = "%m/%d/%Y")
+
+
+### creating tables
+agency <- df %>% 
+  group_by(TypeOfAgency) %>% 
+  summarize(n = n_distinct(CEID))
+###summarizing the Org Count
+org <- df %>% 
+  group_by(TypeOfSNPOrg) %>% 
+  summarize(n = n_distinct(CEID))
+###finding the Sd
+SD <- df %>% 
+  group_by(TypeOfAgency) %>% 
+  summarize(n = n_distinct(CEID), SD = sd(EnrollmentQty, na.rm = TRUE), AVG = mean(EnrollmentQty, na.rm = TRUE))
+df %>% 
+  summary()
+###summary  
+summs <- summary(df$EnrollmentQty)
+sd(df$EnrollmentQty)
+
+summs
+
+```
+
+##Results
+####Quick Summary on Enrollment Quantity.
+```{r echo=FALSE}
+summs
+
+```
+####Total, Standard Deviation, and Mean  of Enrollment Quantity
+```{r echo=FALSE}
+SD
+```
+
