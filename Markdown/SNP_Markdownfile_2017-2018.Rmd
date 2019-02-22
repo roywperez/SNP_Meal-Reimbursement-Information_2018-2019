@@ -2,9 +2,8 @@
 title: "SNP Data Analysis"
 author: "Program Improvement - Roy Perez"
 date: "February 20, 2019"
-output: 
-  html_document: 
-    keep_md: yes
+output: github_document
+always_allow_html: yes
 ---
 ##Quick School Nutrition Program Reimbursement Analysis 
 
@@ -68,8 +67,7 @@ SD
 ```{r echo=FALSE}
 
 kable(CEsummary) %>% 
-  kable_styling() %>% 
-  scroll_box(width = "100%", height = "500px")
+  kable_styling(bootstrap_options = "striped", full_width = F)
   
 ```
 
