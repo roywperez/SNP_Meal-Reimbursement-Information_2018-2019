@@ -13,3 +13,4 @@ df$ESC <- str_pad(df$ESC, 2, pad = 0)
 df$SiteID <- str_pad(df$SiteID, 4, pad = 0)
 ###strip time from the claim date
 df$ClaimDate <- as.Date(df$ClaimDate, format = "%m/%d/%Y")
+

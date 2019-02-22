@@ -2,14 +2,16 @@
 title: "SNP Data Analysis"
 author: "Program Improvement - Roy Perez"
 date: "February 20, 2019"
-output: github_document
-
+output: 
+  html_document: 
+    keep_md: yes
 ---
-##Quick SNP Analysis 
+##Quick School Nutrition Program Reimbursement Analysis 
 
 ```{r setup, echo=FALSE, include=FALSE}
 library(here)
 library(tidyverse)
+library(kableExtra)
 
 ###Loading Data
 df <- read.delim(here("Raw-Data","SNP_Meal-Reimbursement-Information-Program-Year-2018-2019_2019.csv"), header = TRUE, sep = ",", stringsAsFactors = FALSE)
@@ -43,7 +45,10 @@ df %>%
 summs <- summary(df$EnrollmentQty)
 sd(df$EnrollmentQty)
 
-summs
+CEsummary <- df %>% 
+              group_by(CEID, CEName) %>% 
+              summarise("Total Sites" = n_distinct(SiteName), "Total CE Reimbursement" = sum(TotalReimbursement),"Mean Reimbursement" = mean(TotalReimbursement), "Standard Deviation" = sd(TotalReimbursement, na.rm = TRUE))
+
 
 ```
 
@@ -56,5 +61,15 @@ summs
 ####Total, Standard Deviation, and Mean  of Enrollment Quantity
 ```{r echo=FALSE}
 SD
+```
+
+####Summary of all CEs Reimbursement
+
+```{r echo=FALSE}
+
+kable(CEsummary) %>% 
+  kable_styling() %>% 
+  scroll_box(width = "100%", height = "500px")
+  
 ```
 
