@@ -1,9 +1,8 @@
 library(here)
 library(tidyverse)
 library(openxlsx)
-
-
 ###Loading Data
+
 df18 <- read.xlsx("Raw-Data/SNP_Meal-Reimbursement-Information-Program-Year-2017-2018_2019.xlsx", sheet = 1, colNames = TRUE, detectDates = TRUE)
 df17 <- read.xlsx("Raw-Data/SNP_Meal-Reimbursement-Information-Program-Year-2016-2017_2019.xlsx", sheet = 1, colNames = TRUE, detectDates = TRUE)
 df16 <- read.xlsx("Raw-Data/SNP_Meal-Reimbursement-Information-Program-Year-2015-2016_2019.xlsx", sheet = 1, colNames = TRUE, detectDates = TRUE)
@@ -13,8 +12,6 @@ df18$ClaimDate <- as.Date(df18$ClaimDate, origin ="1900-01-01")
 df17$ClaimDate <- as.Date(df17$ClaimDate, origin ="1900-01-01")
 df16$ClaimDate <- as.Date(df16$ClaimDate, origin ="1900-01-01")
 
-as.tibble(df16)
-
 ###case when
 
 df16 <- df16 %>% 
@@ -23,15 +20,20 @@ df16 <- df16 %>%
           BreakfastDays < 23 ~ "Not 30+ days"
         ))
 
-bfastdays <- xtabs(BreakfastDays ~ CEName + BreakfastDays, df16)
-class(bfastdays)
+test <- xtabs(TotalReimbursement ~ CEID, aggregate(TotalReimbursement ~ CEID, df16, sum)) 
+test <- as.tibble(test)
 
+names(bfastdaysmonth)[2] <- "avg_breakfastdays"
+names(bfastdaysmonth)[2] <- "total_breakfastdays"
 
-df16filter <- df16 %>% 
-  filter(maxbfastdays == "23+ days")
+bfastdays17 <- xtabs(BreakfastDays ~ CampusID + BreakfastDays, df17)
+bfastdays17 <- as.tibble(bfastdays17)
 
+lunchdays17 <- xtabs(LunchDays ~ CampusID + LunchDays, df17)
+lunchdays17 <- as.tibble(lunchdays17)
 
-df16filter %>% 
-  summarise(n_distinct(CEID))
-bfastdays <- as.tibble(bfastdays)
-bfastdays
+names(bfastdays17)[2] <- "total_breakfastdays"
+names(lunchdays17)[2] <- "total_lunchdays"
+
+write.xlsx(test, "Raw-Data/manipulated-data/cereimbursementtotals.xlsx")
+write.xlsx(lunchdays17, "Raw-Data/manipulated-data/lunchdays17.xlsx")
